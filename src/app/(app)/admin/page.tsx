@@ -50,10 +50,13 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
   if (error) throw new Error(error.message);
 
   const signupOpen = Boolean(settings?.signup_passphrase_hash);
+  const returnTo = `/admin?${new URLSearchParams({ status: tab, ...(q ? { q } : {}) }).toString()}`;
 
   return (
     <div className="space-y-8">
       <PageHeader title="管理者メニュー" description="購入者の承認・停止・利用期限と、登録用の合言葉を管理します。" />
+
+      {params.saved === "1" && <Alert tone="success">利用者の設定を保存しました。</Alert>}
 
       <Card className="space-y-4">
         <div className="flex flex-wrap items-center gap-2">
@@ -137,6 +140,7 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
                   </div>
                 </div>
                 <MemberForm
+                  returnTo={returnTo}
                   member={{
                     id: m.id,
                     status: m.status,

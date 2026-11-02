@@ -54,3 +54,6 @@ next-env.d.ts
 
 # 拡張機能の配布用zip（ビルド時に自動生成）
 /public/downloads
+
+# 画面の動作確認（E2E）の一時フォルダ
+/.e2e

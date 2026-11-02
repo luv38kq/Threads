@@ -15,8 +15,10 @@ function toJstDate(value: string | null): string {
 
 export function MemberForm({
   member,
+  returnTo,
 }: {
   member: { id: string; status: UserStatus; accessExpiresAt: string | null; adminNote: string };
+  returnTo: string;
 }) {
   const [state, action] = useActionState<FormState, FormData>(updateMember, {});
   const p = `m-${member.id}`;
@@ -25,6 +27,7 @@ export function MemberForm({
     <form action={action} className="space-y-3 border-t border-zinc-200 pt-4 dark:border-zinc-800">
       {state.message && <Alert tone={state.ok ? "success" : "error"}>{state.message}</Alert>}
       <input type="hidden" name="userId" value={member.id} />
+      <input type="hidden" name="returnTo" value={returnTo} />
       <div className="grid gap-3 sm:grid-cols-3">
         <Field label="状態" htmlFor={`${p}-status`}>
           <Select id={`${p}-status`} name="status" defaultValue={member.status}>

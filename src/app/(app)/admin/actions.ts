@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { hashPassphrase } from "@/lib/crypto";
@@ -62,7 +63,14 @@ export async function updateMember(_prev: FormState, formData: FormData): Promis
     return { message: "保存できませんでした。" };
   }
   revalidatePath("/admin");
-  return { ok: true, message: "保存しました。" };
+  // 承認すると「承認待ち」の一覧から消えるため、ページの上に結果を表示する
+  const back = new URL(safeAdminPath(values.returnTo), "http://x");
+  back.searchParams.set("saved", "1");
+  redirect(`${back.pathname}${back.search}`);
+}
+
+function safeAdminPath(value: string | undefined): string {
+  return value && /^\/admin(\?|$)/.test(value) ? value : "/admin";
 }
 
 export async function setSignupPassphrase(
