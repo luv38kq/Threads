@@ -45,6 +45,19 @@ function responseFor(system, prompt) {
       ],
     };
   }
+  if (system.includes("文体を分析する専門家")) {
+    return {
+      first_person: "わたし",
+      endings: "「〜です」「〜なんです」",
+      line_breaks: "1文ごとに改行",
+      sentence_length: "短め",
+      emoji_and_symbols: "絵文字はほぼ使わない",
+      tone: "やさしい敬語",
+      signature_phrases: ["正直に言うと"],
+      hook_habits: "本音から入る",
+      closing_habits: "問いかけで終える",
+    };
+  }
   if (system.includes("競合アカウントで反応が良かった投稿を分析")) {
     return {
       summary: "本音の代弁と数字で手を止める投稿が強い。",

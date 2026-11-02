@@ -7,26 +7,30 @@ import { createClient } from "@/lib/supabase/server";
 import { AccountForm } from "../account-form";
 import { deleteAccount } from "../actions";
 import { KnowledgeSection } from "./knowledge";
+import { StyleExtractor } from "./style-extractor";
+import { pickProvider } from "@/components/provider-select";
+import { listRegisteredProviders } from "@/lib/ai/run";
 
 export const metadata: Metadata = { title: "アカウント設定" };
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export default async function AccountPage({ params, searchParams }: PageProps<"/accounts/[id]">) {
-  await requireActiveUser();
+  const profile = await requireActiveUser();
   const { id } = await params;
   const { saved } = await searchParams;
   if (!UUID.test(id)) notFound();
 
   const supabase = await createClient();
   // 安全ルール（RLS）により、他人のアカウントIDを指定しても何も返りません
-  const [{ data: account }, { data: knowledge }] = await Promise.all([
+  const [{ data: account }, { data: knowledge }, providers] = await Promise.all([
     supabase.from("managed_accounts").select("*").eq("id", id).maybeSingle(),
     supabase
       .from("knowledge_items")
       .select("id, title, content, updated_at")
       .eq("account_id", id)
       .order("created_at", { ascending: true }),
+    listRegisteredProviders(),
   ]);
   if (!account) notFound();
 
@@ -42,6 +46,13 @@ export default async function AccountPage({ params, searchParams }: PageProps<"/
       <Card>
         <AccountForm key={account.updated_at} account={account} />
       </Card>
+
+      <StyleExtractor
+        accountId={account.id}
+        providers={providers}
+        defaultProvider={pickProvider(providers, profile.preferred_ai_provider)}
+        hasSamples={account.style_samples.trim().length > 0}
+      />
 
       <KnowledgeSection accountId={account.id} items={knowledge ?? []} />
 

@@ -229,6 +229,16 @@ async function main() {
   check(stored.rows.length === 1 && !stored.rows[0].encrypted_key.includes("sk-ant"), "データベースにはAPIキーが暗号化された形でしか残らない");
   await shot(user, "03-ai-settings");
 
+  // ---------------------------------------------------------------- 5-2. 文章のクセの読み取り
+  await user.goto(accountUrl);
+  await user.fill("#styleSamples", "正直に言うと、在宅ワークは甘くないです。\nでも、わたしは続けてよかったと思っています。\n子どもが寝たあとの30分だけ。\nそれでも半年で景色が変わりました。\nあなたは、夜の30分を何に使っていますか？");
+  await user.click('button:has-text("変更を保存")');
+  await user.waitForURL(/saved=1/);
+  user.once("dialog", (d) => d.accept());
+  await user.click('button:has-text("見本から読み取る")');
+  await user.getByText("文章のクセを読み取って").waitFor({ timeout: 60000 });
+  check((await user.inputValue("#writingStyle")).includes("一人称：わたし"), "過去の投稿の見本から、文章のクセをAIで読み取って保存できる");
+
   // ---------------------------------------------------------------- 6. 投稿生成
   await user.goto(`${APP}/generate`);
   await user.fill("#theme", "在宅ワークの始め方");

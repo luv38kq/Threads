@@ -4,6 +4,11 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireActiveUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import { isProvider } from "@/lib/ai/providers";
+import { buildStylePrompt, MIN_SAMPLE_CHARS, STYLE_SYSTEM_PROMPT, styleOutputSchema, styleToText } from "@/lib/ai/prompts/style";
+import { errorMessage, requireApiKey } from "@/lib/ai/run";
+import { generateStructured } from "@/lib/ai/structured";
+import { countChars } from "@/lib/posts/rules";
 import {
   accountSchema,
   fieldErrors,
@@ -147,4 +152,51 @@ export async function deleteKnowledge(formData: FormData) {
     .maybeSingle();
   if (error) console.error("[deleteKnowledge]", error.message);
   if (data) revalidatePath(`/accounts/${data.account_id}`);
+}
+
+// ---------------------------------------------------------------------
+// 過去の投稿の見本から、文章のクセをAIで読み取って「文章のクセ」欄に入れる
+// ---------------------------------------------------------------------
+export async function extractWritingStyle(_prev: FormState, formData: FormData): Promise<FormState> {
+  const profile = await requireActiveUser();
+  const accountId = String(formData.get("accountId") ?? "");
+  const provider = formData.get("provider");
+  if (!UUID.test(accountId)) return { message: "アカウントが見つかりません。" };
+  if (!isProvider(provider)) return { message: "AIを選んでください。" };
+
+  try {
+    const supabase = await createClient();
+    const { data: account } = await supabase
+      .from("managed_accounts")
+      .select("style_samples")
+      .eq("id", accountId)
+      .maybeSingle();
+    if (!account) return { message: "アカウントが見つかりません。" };
+    if (countChars(account.style_samples.trim()) < MIN_SAMPLE_CHARS) {
+      return {
+        message: `先に「過去の投稿の見本」を${MIN_SAMPLE_CHARS}文字以上入れて保存してください（2〜5本ほどがおすすめです）。`,
+      };
+    }
+
+    const { apiKey, model } = await requireApiKey(profile, provider);
+    const style = await generateStructured({
+      provider,
+      apiKey,
+      model,
+      system: STYLE_SYSTEM_PROMPT,
+      prompt: buildStylePrompt(account.style_samples),
+      schema: styleOutputSchema,
+      maxTokens: 4000,
+    });
+
+    const { error } = await supabase
+      .from("managed_accounts")
+      .update({ writing_style: styleToText(style) })
+      .eq("id", accountId);
+    if (error) return { message: "保存できませんでした。もう一度お試しください。" };
+  } catch (error) {
+    return { message: errorMessage(error) };
+  }
+  revalidatePath(`/accounts/${accountId}`);
+  return { ok: true, message: "文章のクセを読み取って「文章のクセ」欄に入れました。必要に応じて手直しして保存してください。" };
 }
