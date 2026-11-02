@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // Cloudflare 上でのアプリ名（URL の一部になります）
+  "name": "threads-studio",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "observability": {
+    "enabled": true
+  }
+  // 秘密の値（SUPABASE_SECRET_KEY / ENCRYPTION_KEY）はここには書かず、
+  // Cloudflare の管理画面「Variables and Secrets」に登録します。
+}
