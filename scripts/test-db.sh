@@ -39,7 +39,7 @@ for f in "$ROOT"/supabase/migrations/*.sql; do
   echo "適用中: $(basename "$f")"
   "${PSQL[@]}" -f "$f"
 done
-for f in "$ROOT"/supabase/tests/1*.sql; do
+for f in "$ROOT"/supabase/tests/[1-9]*.sql; do
   echo "テスト: $(basename "$f")"
   "${PSQL[@]}" -tA -f "$f" 2>&1 | sed -e 's/^psql:[^ ]* NOTICE:  /  /' -e '/^$/d'
 done

@@ -60,6 +60,28 @@ export type AiCredentialRow = {
   verified_at: string | null;
 } & Timestamps;
 
+export type GenerationKind = "generate" | "analyze" | "rewrite";
+
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[];
+
+export type GenerationRow = {
+  id: string;
+  user_id: string;
+  account_id: string | null;
+  kind: GenerationKind;
+  provider: AiProvider;
+  model: string;
+  input: Json;
+  output: Json;
+  created_at: string;
+};
+
 type Table<Row, Required extends keyof Row = never> = {
   Row: Row;
   Insert: Partial<Row> & Pick<Row, Required>;
@@ -78,6 +100,10 @@ export type Database = {
         AiCredentialRow,
         "provider" | "encrypted_key" | "key_hint"
       >;
+      generations: Table<
+        GenerationRow,
+        "kind" | "provider" | "model" | "input" | "output"
+      >;
     };
     Views: { [_ in never]: never };
     Functions: {
@@ -86,6 +112,7 @@ export type Database = {
     Enums: {
       user_status: UserStatus;
       ai_provider: AiProvider;
+      generation_kind: GenerationKind;
     };
     CompositeTypes: { [_ in never]: never };
   };

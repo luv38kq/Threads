@@ -181,7 +181,7 @@ create trigger managed_accounts_set_updated_at
   for each row execute function public.set_updated_at();
 
 alter table public.managed_accounts enable row level security;
-revoke all on table public.managed_accounts from anon;
+revoke all on table public.managed_accounts from anon, authenticated;
 grant select, insert, update, delete on table public.managed_accounts to authenticated;
 grant all on table public.managed_accounts to service_role;
 
@@ -215,7 +215,7 @@ create trigger knowledge_items_set_updated_at
   for each row execute function public.set_updated_at();
 
 alter table public.knowledge_items enable row level security;
-revoke all on table public.knowledge_items from anon;
+revoke all on table public.knowledge_items from anon, authenticated;
 grant select, insert, update, delete on table public.knowledge_items to authenticated;
 grant all on table public.knowledge_items to service_role;
 
@@ -249,7 +249,7 @@ create trigger ai_credentials_set_updated_at
   for each row execute function public.set_updated_at();
 
 alter table public.ai_credentials enable row level security;
-revoke all on table public.ai_credentials from anon;
+revoke all on table public.ai_credentials from anon, authenticated;
 grant select, insert, update, delete on table public.ai_credentials to authenticated;
 grant all on table public.ai_credentials to service_role;
 

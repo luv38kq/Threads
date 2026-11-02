@@ -5,6 +5,8 @@ import { Button } from "@/components/ui";
 
 const NAV = [
   { href: "/dashboard", label: "ホーム" },
+  { href: "/generate", label: "投稿生成" },
+  { href: "/history", label: "履歴" },
   { href: "/accounts", label: "アカウント" },
   { href: "/settings/ai", label: "AI設定" },
 ] as const;
