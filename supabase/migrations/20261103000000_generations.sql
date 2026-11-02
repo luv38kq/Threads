@@ -5,7 +5,7 @@
 -- （20261102000000_init.sql を実行したあとに実行します）
 -- =====================================================================
 
-create type public.generation_kind as enum ('generate', 'analyze', 'rewrite');
+create type public.generation_kind as enum ('generate', 'analyze', 'rewrite', 'research');
 
 create table public.generations (
   id uuid primary key default gen_random_uuid(),

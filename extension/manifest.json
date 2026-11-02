@@ -1,0 +1,37 @@
+{
+  "manifest_version": 3,
+  "name": "投稿リサーチ for Threads",
+  "short_name": "投稿リサーチ",
+  "version": "0.1.0",
+  "description": "Threadsで開いているページの投稿を集めて、反応の良い投稿をAI分析しやすい形にまとめます（Threads 投稿スタジオ購入者向け）。",
+  "action": {
+    "default_title": "投稿リサーチ",
+    "default_popup": "popup/popup.html"
+  },
+  "permissions": ["storage"],
+  "optional_host_permissions": ["https://*/*", "http://localhost/*", "http://127.0.0.1/*"],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.threads.com/*",
+        "https://threads.com/*",
+        "https://www.threads.net/*",
+        "https://threads.net/*"
+      ],
+      "js": ["src/interceptor.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "https://www.threads.com/*",
+        "https://threads.com/*",
+        "https://www.threads.net/*",
+        "https://threads.net/*"
+      ],
+      "js": ["src/parser.js", "src/content.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "minimum_chrome_version": "111"
+}

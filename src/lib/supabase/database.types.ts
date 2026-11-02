@@ -60,7 +60,7 @@ export type AiCredentialRow = {
   verified_at: string | null;
 } & Timestamps;
 
-export type GenerationKind = "generate" | "analyze" | "rewrite";
+export type GenerationKind = "generate" | "analyze" | "rewrite" | "research";
 
 export type Json =
   | string
@@ -79,6 +79,27 @@ export type GenerationRow = {
   model: string;
   input: Json;
   output: Json;
+  created_at: string;
+};
+
+export type ExtensionTokenRow = {
+  id: string;
+  user_id: string;
+  name: string;
+  token_hash: string;
+  token_hint: string;
+  last_used_at: string | null;
+  created_at: string;
+};
+
+export type ResearchSetRow = {
+  id: string;
+  user_id: string;
+  account_id: string | null;
+  source_username: string;
+  source_url: string;
+  posts: Json;
+  post_count: number;
   created_at: string;
 };
 
@@ -104,6 +125,8 @@ export type Database = {
         GenerationRow,
         "kind" | "provider" | "model" | "input" | "output"
       >;
+      extension_tokens: Table<ExtensionTokenRow, "token_hash" | "token_hint">;
+      research_sets: Table<ResearchSetRow, "posts" | "post_count">;
     };
     Views: { [_ in never]: never };
     Functions: {

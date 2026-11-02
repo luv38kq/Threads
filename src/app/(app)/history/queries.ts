@@ -6,12 +6,14 @@ export const KIND_LABELS: Record<GenerationKind, string> = {
   generate: "投稿生成",
   analyze: "投稿分析",
   rewrite: "リライト",
+  research: "競合分析",
 };
 
 export const KIND_PATHS: Record<GenerationKind, string> = {
   generate: "/generate",
   analyze: "/analyze",
   rewrite: "/rewrite",
+  research: "/research/report",
 };
 
 export async function getAccountName(accountId: string | null): Promise<string | undefined> {

@@ -6,9 +6,11 @@ import { Button } from "@/components/ui";
 const NAV = [
   { href: "/dashboard", label: "ホーム" },
   { href: "/generate", label: "投稿生成" },
+  { href: "/research", label: "競合リサーチ" },
   { href: "/history", label: "履歴" },
   { href: "/accounts", label: "アカウント" },
   { href: "/settings/ai", label: "AI設定" },
+  { href: "/settings/extension", label: "拡張機能" },
 ] as const;
 
 export default async function AppLayout({ children }: LayoutProps<"/">) {
