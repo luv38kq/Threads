@@ -1,6 +1,5 @@
 import "server-only";
 import Anthropic from "@anthropic-ai/sdk";
-import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
 import { z } from "zod";
 import type { AiProvider } from "@/lib/supabase/database.types";
 
@@ -69,12 +68,14 @@ async function callAnthropic<T extends z.ZodType>(req: StructuredRequest<T>): Pr
     ? { betas: ["server-side-fallback-2026-07-01"], fallbacks: "default" as const }
     : {};
   try {
-    const response = await client.beta.messages.parse({
+    // 「決まった形（JSON）」で答えるよう指定する。答えの読み取りと形のチェックは自分で行い、
+    // 断られた・途中で切れた場合を先に見分けられるようにしている
+    const response = await client.beta.messages.create({
       model: req.model,
       max_tokens: req.maxTokens ?? 16000,
       system: req.system,
       messages: [{ role: "user", content: req.prompt }],
-      output_config: { format: betaZodOutputFormat(req.schema) },
+      output_config: { format: { type: "json_schema", schema: jsonSchemaFor(req.schema) } },
       ...fallback,
     });
     if (response.stop_reason === "refusal") {
@@ -83,10 +84,10 @@ async function callAnthropic<T extends z.ZodType>(req: StructuredRequest<T>): Pr
     if (response.stop_reason === "max_tokens") {
       throw new AiError("max_tokens", "AIの答えが長すぎて途中で切れました。パターン数を減らしてお試しください。");
     }
-    if (response.parsed_output == null) {
-      throw new AiError("no parsed output", "AIの答えを読み取れませんでした。もう一度お試しください。");
-    }
-    return response.parsed_output;
+    const text = response.content
+      .map((block) => (block.type === "text" ? block.text : ""))
+      .join("");
+    return parseJsonText(text);
   } catch (error) {
     if (error instanceof AiError) throw error;
     throw mapAnthropicError(error);

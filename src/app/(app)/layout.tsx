@@ -6,6 +6,8 @@ import { Button } from "@/components/ui";
 const NAV = [
   { href: "/dashboard", label: "ホーム" },
   { href: "/generate", label: "投稿生成" },
+  { href: "/analyze", label: "投稿分析" },
+  { href: "/rewrite", label: "リライト" },
   { href: "/research", label: "競合リサーチ" },
   { href: "/history", label: "履歴" },
   { href: "/accounts", label: "アカウント" },

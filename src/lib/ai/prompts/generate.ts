@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { THREADS_MAX_CHARS, type RuleViolation } from "@/lib/posts/rules";
+import { THREADS_MAX_CHARS } from "@/lib/posts/rules";
 import { accountContextText, type AccountContext, type KnowledgeContext } from "./context";
 
 // ---------------------------------------------------------------------
@@ -106,26 +106,4 @@ ${accountContextText(account, knowledge, { targetOverride: input.targetOverride 
 <request>
 ${request}
 </request>`;
-}
-
-/** ルール違反があったパターンだけを直してもらうための指示文 */
-export function buildRepairPrompt(
-  original: GenerateOutput,
-  violations: RuleViolation[],
-  input: Pick<GenerateInput, "maxChars" | "commentCount">,
-): string {
-  const lines = violations.map((v) => `- パターン${v.index + 1}：${v.message}`).join("\n");
-  return `先ほど作った投稿案に、ルールを守れていない箇所があります。
-
-<problems>
-${lines}
-</problems>
-
-<previous_output>
-${JSON.stringify(original, null, 2)}
-</previous_output>
-
-指摘のあるパターンだけを、内容と良さをできるだけ保ったまま直してください。指摘のないパターンは一字一句そのまま残してください。
-本文は${input.maxChars}文字以内、コメントは各${THREADS_MAX_CHARS}文字以内、コメント欄の数は${input.commentCount}です。
-同じ形（patterns 配列）で、すべてのパターンを返してください。`;
 }
