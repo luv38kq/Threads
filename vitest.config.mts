@@ -10,7 +10,7 @@ export default defineConfig({
     },
   },
   test: {
-    include: ["src/**/*.test.ts", "extension/test/**/*.test.js"],
+    include: ["src/**/*.test.ts", "extension/test/**/*.test.js", "parent-tools/test/**/*.test.js"],
     environment: "node",
   },
 });

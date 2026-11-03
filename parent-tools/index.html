@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>子育てことば帖</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="声かけの言い換え、トイトレのお悩みQ&A、ことばのチェック。子育て中の毎日に使える無料の道具箱です。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Zen+Maru+Gothic:wght@500;700&display=swap">
+<style>
+/* Layout: one narrow column like a pocket notebook; sticky tab strip; cards only for answers. */
+:root {
+  --paper: #f2f5f1;
+  --sheet: #ffffff;
+  --ink: #1f2b30;
+  --muted: #5d6b68;
+  --line: #d6dfda;
+  --ok: #1d6b61;
+  --ok-soft: #e1f0ec;
+  --ng: #9b4256;
+  --ng-soft: #f6e4e8;
+  --marker: #f7dc6f;
+  --marker-ink: #1f2b30;
+  --mild: #a26a12;
+  --mild-soft: #fbefd6;
+  --focus: #2f6fb0;
+  --font-display: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "BIZ UDPGothic", sans-serif;
+  --font-body: "BIZ UDPGothic", "Hiragino Sans", "Noto Sans JP", "Yu Gothic", sans-serif;
+  --radius: 14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #131917; --sheet: #1b2321; --ink: #e5ece8; --muted: #9fb0aa; --line: #2e3a37;
+    --ok: #7fd3c4; --ok-soft: #173430; --ng: #f0a2b3; --ng-soft: #3a2228;
+    --marker: #6b5a1c; --marker-ink: #fff6d6; --mild: #e8b866; --mild-soft: #3a2f18; --focus: #8cbcf0;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #131917; --sheet: #1b2321; --ink: #e5ece8; --muted: #9fb0aa; --line: #2e3a37;
+  --ok: #7fd3c4; --ok-soft: #173430; --ng: #f0a2b3; --ng-soft: #3a2228;
+  --marker: #6b5a1c; --marker-ink: #fff6d6; --mild: #e8b866; --mild-soft: #3a2f18; --focus: #8cbcf0;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.75;
+}
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--paper);
+}
+.wrap {
+  max-width: 640px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+header.top { padding-block: 28px 8px; }
+.brand { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+h1 {
+  font-family: var(--font-display); font-weight: 700; font-size: 1.75rem; letter-spacing: 0.04em; margin: 0;
+  text-wrap: balance;
+}
+.brand small { color: var(--muted); font-size: 0.8rem; }
+.lead { color: var(--muted); margin: 6px 0 0; font-size: 0.92rem; }
+
+nav.tabs {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  background: var(--paper); border-bottom: 1px solid var(--line);
+}
+nav.tabs .wrap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding-block: 8px; }
+nav.tabs a {
+  display: block; text-align: center; text-decoration: none; color: var(--muted);
+  font-family: var(--font-display); font-weight: 700; font-size: 0.95rem;
+  padding: 8px 4px; border-radius: 999px;
+}
+nav.tabs a[aria-current="page"] { background: var(--ink); color: var(--paper); }
+
+main { padding-block: 20px 40px; }
+section.panel { display: grid; gap: 18px; grid-template-columns: minmax(0, 1fr); }
+section.panel > * { min-width: 0; }
+h2 { font-family: var(--font-display); font-weight: 700; font-size: 1.25rem; margin: 0; text-wrap: balance; }
+.hint { color: var(--muted); font-size: 0.88rem; margin: 0; }
+.label { font-size: 0.78rem; letter-spacing: 0.08em; color: var(--muted); font-weight: 700; margin: 0 0 6px; }
+
+/* chips */
+.chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; }
+.chips.wrapchips { flex-wrap: wrap; overflow: visible; }
+.chip {
+  flex: none; border: 1.5px solid var(--line); background: var(--sheet); color: var(--ink);
+  font: inherit; font-size: 0.9rem; padding: 6px 14px; border-radius: 999px; cursor: pointer;
+}
+.chip[aria-pressed="true"] { border-color: var(--ok); background: var(--ok-soft); color: var(--ok); font-weight: 700; }
+button:focus-visible, a:focus-visible, textarea:focus-visible, .chip:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+/* phrase cards */
+.list { display: grid; gap: 12px; }
+.phrase {
+  min-width: 0; background: var(--sheet); border-radius: var(--radius); padding: 16px 16px 12px;
+  display: grid; gap: 8px; border: 1px solid var(--line);
+}
+.ngline { margin: 0; color: var(--ng); font-size: 0.95rem; }
+.ngline s { text-decoration-thickness: 1.5px; }
+.tag {
+  display: inline-block; margin-right: 8px; vertical-align: 0.1em; line-height: 1.6; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; padding: 1px 8px; border-radius: 999px;
+}
+.tag.ng { background: var(--ng-soft); color: var(--ng); }
+.tag.ok { background: var(--ok-soft); color: var(--ok); }
+.okline { margin: 0; }
+.okline q {
+  quotes: "「" "」"; font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; line-height: 1.6;
+  background: linear-gradient(transparent 62%, var(--marker) 62%); color: var(--marker-ink);
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+.why { color: var(--muted); font-size: 0.88rem; margin: 0; }
+.meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.agebadge { font-size: 0.75rem; color: var(--muted); }
+.actions { display: flex; gap: 6px; }
+.btn {
+  font: inherit; font-size: 0.85rem; border: 1.5px solid var(--line); background: transparent; color: var(--ink);
+  padding: 4px 12px; border-radius: 999px; cursor: pointer;
+}
+.btn.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); font-weight: 700; padding: 10px 18px; }
+.btn[aria-pressed="true"] { color: var(--mild); border-color: var(--mild); }
+.toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.empty { color: var(--muted); text-align: center; padding: 24px 8px; margin: 0; }
+
+/* toilet */
+.steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; counter-reset: st; }
+@media (max-width: 420px) { .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.step {
+  font: inherit; text-align: left; border: 1.5px solid var(--line); background: var(--sheet); color: var(--ink);
+  border-radius: 10px; padding: 8px 10px; cursor: pointer; font-size: 0.88rem; line-height: 1.4;
+}
+.step span { display: block; font-size: 0.7rem; color: var(--muted); letter-spacing: 0.06em; }
+.step[aria-pressed="true"] { border-color: var(--ok); background: var(--ok-soft); color: var(--ok); font-weight: 700; }
+.concerns { display: grid; gap: 6px; }
+.concern {
+  font: inherit; text-align: left; border: 1.5px solid var(--line); background: var(--sheet); color: var(--ink);
+  border-radius: 10px; padding: 10px 12px; cursor: pointer;
+}
+.concern[aria-pressed="true"] { border-color: var(--ink); box-shadow: inset 4px 0 0 var(--ok); font-weight: 700; }
+.answer { background: var(--sheet); border-radius: var(--radius); padding: 20px 18px; display: grid; gap: 14px; border: 1px solid var(--line); }
+.answer h3 { font-family: var(--font-display); font-size: 1.15rem; margin: 0; }
+.empathy { margin: 0; padding-left: 12px; border-left: 3px solid var(--marker); }
+.answer ul { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; }
+.note { background: var(--ok-soft); color: var(--ink); border-radius: 10px; padding: 10px 12px; margin: 0; font-size: 0.92rem; }
+.consult { background: var(--mild-soft); border-radius: 10px; padding: 10px 12px; margin: 0; font-size: 0.92rem; }
+.consult b, .note b { display: block; font-size: 0.78rem; letter-spacing: 0.06em; }
+
+/* check */
+textarea {
+  width: 100%; min-height: 7.5em; resize: vertical; font: inherit; color: var(--ink); background: var(--sheet);
+  border: 1.5px solid var(--line); border-radius: var(--radius); padding: 12px 14px; line-height: 1.7;
+}
+.preview { background: var(--sheet); border-radius: var(--radius); padding: 14px 16px; border: 1px solid var(--line); white-space: pre-wrap; overflow-wrap: anywhere; }
+mark { color: inherit; border-radius: 4px; padding: 0 2px; }
+mark.strong { background: var(--ng-soft); box-shadow: inset 0 -2px 0 var(--ng); }
+mark.mild { background: var(--mild-soft); box-shadow: inset 0 -2px 0 var(--mild); }
+.finding { border-top: 1px solid var(--line); padding-top: 12px; display: grid; gap: 6px; }
+.finding:first-child { border-top: 0; padding-top: 0; }
+.finding .head { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.kind { font-size: 0.75rem; font-weight: 700; padding: 1px 10px; border-radius: 999px; }
+.kind.strong { background: var(--ng-soft); color: var(--ng); }
+.kind.mild { background: var(--mild-soft); color: var(--mild); }
+.finding .words { font-size: 0.85rem; color: var(--muted); }
+.finding p { margin: 0; font-size: 0.92rem; }
+.finding .tip { color: var(--ok); }
+.summary { font-family: var(--font-display); font-weight: 700; margin: 0; }
+
+footer { color: var(--muted); font-size: 0.8rem; padding-block: 8px 32px; display: grid; gap: 6px; }
+footer p { margin: 0; }
+.toast {
+  position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  background: var(--ink); color: var(--paper); padding: 8px 16px; border-radius: 999px; font-size: 0.88rem; z-index: 20;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .phrase, .answer { animation: rise 0.25s ease-out both; }
+  @keyframes rise { from { transform: translateY(4px); opacity: 0.6; } to { transform: none; opacity: 1; } }
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <h1>子育てことば帖</h1>
+      <small>声かけ・トイトレの道具箱</small>
+    </div>
+    <p class="lead">つい言ってしまう言葉を、伝わる言葉に。登録なし・無料で使えます。</p>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="道具を選ぶ">
+  <div class="wrap">
+    <a href="#koekake" data-tab="koekake">声かけ言い換え</a>
+    <a href="#toitore" data-tab="toitore">トイトレQ&amp;A</a>
+    <a href="#check" data-tab="check">ことばチェック</a>
+  </div>
+</nav>
+
+<main class="wrap">
+  <section class="panel" id="panel-koekake" aria-labelledby="h-koekake">
+    <div>
+      <h2 id="h-koekake">声かけ言い換え</h2>
+      <p class="hint">場面と年齢を選ぶと、つい言いがちな言葉と、伝わりやすい言い換えが出ます。</p>
+    </div>
+    <div>
+      <p class="label">場面</p>
+      <div class="chips" id="scene-chips" role="group" aria-label="場面"></div>
+    </div>
+    <div>
+      <p class="label">年齢</p>
+      <div class="chips wrapchips" id="age-chips" role="group" aria-label="年齢"></div>
+    </div>
+    <div class="list" id="phrase-list" aria-live="polite"></div>
+    <div class="toolbar">
+      <button type="button" class="btn primary" id="copy-list">このリストをコピー</button>
+      <span class="hint">メモやSNSにそのまま貼れる形でコピーします。</span>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-toitore" aria-labelledby="h-toitore" hidden>
+    <div>
+      <h2 id="h-toitore">トイトレQ&amp;A</h2>
+      <p class="hint">年齢・今の段階・悩みを選ぶと、ひと息つける言葉と小さなコツが出ます。</p>
+    </div>
+    <div>
+      <p class="label">年齢</p>
+      <div class="chips wrapchips" id="t-age" role="group" aria-label="年齢"></div>
+    </div>
+    <div>
+      <p class="label">今の段階</p>
+      <div class="steps" id="t-stage" role="group" aria-label="今の段階"></div>
+    </div>
+    <div>
+      <p class="label">悩み</p>
+      <div class="concerns" id="t-concern" role="group" aria-label="悩み"></div>
+    </div>
+    <article class="answer" id="t-answer" aria-live="polite"></article>
+  </section>
+
+  <section class="panel" id="panel-check" aria-labelledby="h-check" hidden>
+    <div>
+      <h2 id="h-check">ことばチェック</h2>
+      <p class="hint">子どもに言いそうな言葉や、書いてみた文章を入れてください。気をつけたい言い方に印を付けて、言い換えのヒントを出します。</p>
+    </div>
+    <div>
+      <label class="label" for="check-input">チェックする言葉</label>
+      <textarea id="check-input" maxlength="2000"></textarea>
+      <div class="toolbar">
+        <button type="button" class="btn" id="check-clear">消す</button>
+        <button type="button" class="btn" id="check-sample">例を入れる</button>
+        <span class="hint" id="check-example-note">今は例の文章が入っています。</span>
+      </div>
+    </div>
+    <div class="preview" id="check-preview" aria-live="polite"></div>
+    <div class="answer" id="check-result"></div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <p>ここにある内容は一般的な情報で、どの子にも当てはまる正解ではありません。お子さんの体や発達で心配なことがあるときは、小児科や地域の保健師さんに相談してください。</p>
+  <p>入力した文章はこの画面の中だけで使い、どこにも送りません。</p>
+</footer>
+
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
