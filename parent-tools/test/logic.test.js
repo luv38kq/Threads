@@ -75,6 +75,14 @@ describe("トイトレQ&Aのデータ", () => {
     }
   });
 
+  it("悩みは30個以上あり、同じ段階の中で番号が重ならない", () => {
+    expect(TOILET_QA.length).toBeGreaterThanOrEqual(30);
+    const keys = TOILET_QA.map((q) => `${q.stage}|${q.id}`);
+    expect(new Set(keys).size).toBe(keys.length);
+    const stages = new Set(TOILET_STAGES.map((s) => s.id));
+    expect(TOILET_QA.every((q) => stages.has(q.stage))).toBe(true);
+  });
+
   it("年齢・段階・悩みから答えを作り、文章にできる", () => {
     const a = toiletAnswer("2-3", "night", "bedwet");
     expect(a.ageLabel).toBe("2〜3歳");
