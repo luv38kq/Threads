@@ -1,15 +1,4 @@
-<!doctype html>
-<html lang="ja">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>子育てことば帖</title>
-<meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="声かけの言い換え、トイトレのお悩みQ&A、ことばのチェック。子育て中の毎日に使える無料の道具箱です。">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Zen+Maru+Gothic:wght@500;700&display=swap">
-<style>
+/* 声かけ帖・トイトレ帖で共通の見た目（2つのフォルダに同じものを置いています） */
 /* Layout: one narrow column like a pocket notebook; sticky tab strip; cards only for answers. */
 :root {
   --paper: #f2f5f1;
@@ -187,94 +176,30 @@ footer p { margin: 0; }
   .phrase, .answer { animation: rise 0.25s ease-out both; }
   @keyframes rise { from { transform: translateY(4px); opacity: 0.6; } to { transform: none; opacity: 1; } }
 }
-</style>
-</head>
-<body>
-<header class="top">
-  <div class="wrap">
-    <div class="brand">
-      <h1>子育てことば帖</h1>
-      <small>声かけ・トイトレの道具箱</small>
-    </div>
-    <p class="lead">つい言ってしまう言葉を、伝わる言葉に。登録なし・無料で使えます。</p>
-  </div>
-</header>
 
-<nav class="tabs" aria-label="道具を選ぶ">
-  <div class="wrap">
-    <a href="#koekake" data-tab="koekake">声かけ言い換え</a>
-    <a href="#toitore" data-tab="toitore">トイトレQ&amp;A</a>
-    <a href="#check" data-tab="check">ことばチェック</a>
-  </div>
-</nav>
-
-<main class="wrap">
-  <section class="panel" id="panel-koekake" aria-labelledby="h-koekake">
-    <div>
-      <h2 id="h-koekake">声かけ言い換え</h2>
-      <p class="hint">場面と年齢を選ぶと、つい言いがちな言葉と、伝わりやすい言い換えが出ます。</p>
-    </div>
-    <div>
-      <p class="label">場面</p>
-      <div class="chips wrapchips" id="scene-chips" role="group" aria-label="場面"></div>
-    </div>
-    <div>
-      <p class="label">年齢</p>
-      <div class="chips wrapchips" id="age-chips" role="group" aria-label="年齢"></div>
-    </div>
-    <div class="list" id="phrase-list" aria-live="polite"></div>
-    <div class="toolbar">
-      <button type="button" class="btn primary" id="copy-list">このリストをコピー</button>
-      <span class="hint">メモやSNSにそのまま貼れる形でコピーします。</span>
-    </div>
-  </section>
-
-  <section class="panel" id="panel-toitore" aria-labelledby="h-toitore" hidden>
-    <div>
-      <h2 id="h-toitore">トイトレQ&amp;A</h2>
-      <p class="hint">年齢・今の段階・悩みを選ぶと、ひと息つける言葉と小さなコツが出ます。</p>
-    </div>
-    <div>
-      <p class="label">年齢</p>
-      <div class="chips wrapchips" id="t-age" role="group" aria-label="年齢"></div>
-    </div>
-    <div>
-      <p class="label">今の段階</p>
-      <div class="steps" id="t-stage" role="group" aria-label="今の段階"></div>
-    </div>
-    <div>
-      <p class="label">悩み</p>
-      <div class="concerns" id="t-concern" role="group" aria-label="悩み"></div>
-    </div>
-    <article class="answer" id="t-answer" aria-live="polite"></article>
-  </section>
-
-  <section class="panel" id="panel-check" aria-labelledby="h-check" hidden>
-    <div>
-      <h2 id="h-check">ことばチェック</h2>
-      <p class="hint">子どもに言いそうな言葉や、書いてみた文章を入れてください。気をつけたい言い方に印を付けて、言い換えのヒントを出します。</p>
-    </div>
-    <div>
-      <label class="label" for="check-input">チェックする言葉</label>
-      <textarea id="check-input" maxlength="2000"></textarea>
-      <div class="toolbar">
-        <button type="button" class="btn" id="check-clear">消す</button>
-        <button type="button" class="btn" id="check-sample">例を入れる</button>
-        <span class="hint" id="check-example-note">今は例の文章が入っています。</span>
-      </div>
-    </div>
-    <div class="preview" id="check-preview" aria-live="polite"></div>
-    <div class="answer" id="check-result"></div>
-  </section>
-</main>
-
-<footer class="wrap">
-  <p>ここにある内容は一般的な情報で、どの子にも当てはまる正解ではありません。お子さんの体や発達で心配なことがあるときは、小児科や地域の保健師さんに相談してください。</p>
-  <p>入力した文章はこの画面の中だけで使い、どこにも送りません。</p>
-</footer>
-
-<div class="toast" id="toast" role="status" hidden></div>
-
-<script type="module" src="app.js"></script>
-</body>
-</html>
+/* 検索・今日のひとこと・コツ・きろく・チェックリスト */
+.search { width: 100%; font: inherit; color: var(--ink); background: var(--sheet); border: 1.5px solid var(--line); border-radius: 999px; padding: 8px 16px; }
+.search:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.today { background: var(--sheet); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: grid; gap: 6px; }
+.today .label { margin: 0; }
+.tips { display: grid; gap: 12px; }
+.tipcard { background: var(--sheet); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: grid; gap: 8px; min-width: 0; }
+.tipcard h3 { margin: 0; font-family: var(--font-display); font-size: 1.05rem; display: flex; align-items: baseline; gap: 8px; }
+.tipcard h3 span { font-size: 0.75rem; color: var(--muted); font-family: var(--font-body); }
+.tipcard p { margin: 0; }
+.tipcard ul { margin: 0; padding-left: 1.2em; }
+.checklist { display: grid; gap: 8px; }
+.checkitem { display: flex; gap: 10px; align-items: flex-start; background: var(--sheet); border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 12px; cursor: pointer; }
+.checkitem input { width: 20px; height: 20px; margin-top: 3px; accent-color: var(--ok); flex: none; }
+.checkitem small { display: block; color: var(--muted); font-size: 0.82rem; }
+.meter { height: 10px; background: var(--line); border-radius: 999px; overflow: hidden; }
+.meter span { display: block; height: 100%; background: var(--ok); border-radius: 999px; }
+.logbtns { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.logbtn { font: inherit; border: 1.5px solid var(--line); background: var(--sheet); color: var(--ink); border-radius: 14px; padding: 14px 6px; cursor: pointer; display: grid; gap: 2px; text-align: center; }
+.logbtn b { font-family: var(--font-display); font-size: 1.6rem; font-variant-numeric: tabular-nums; }
+.logbtn small { color: var(--muted); font-size: 0.78rem; }
+.week { width: 100%; border-collapse: collapse; font-size: 0.88rem; font-variant-numeric: tabular-nums; }
+.week th, .week td { padding: 6px 4px; text-align: center; border-bottom: 1px solid var(--line); }
+.week th { color: var(--muted); font-weight: 700; font-size: 0.78rem; }
+.week td.day { text-align: left; }
+.tablewrap { overflow-x: auto; }
