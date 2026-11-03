@@ -203,3 +203,32 @@ footer p { margin: 0; }
 .week th { color: var(--muted); font-weight: 700; font-size: 0.78rem; }
 .week td.day { text-align: left; }
 .tablewrap { overflow-x: auto; }
+
+/* タイプチェック・しくみ */
+.quiz { display: grid; gap: 12px; }
+.question { background: var(--sheet); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; display: grid; gap: 8px; }
+.question p { margin: 0; font-weight: 700; }
+.qnum { display: inline-block; min-width: 2.4em; color: var(--ok); font-family: var(--font-display); margin-right: 6px; }
+.choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.choice { font: inherit; font-size: 0.9rem; text-align: left; line-height: 1.5; border: 1.5px solid var(--line); background: var(--paper); color: var(--ink); border-radius: 10px; padding: 8px 10px; cursor: pointer; }
+.choice[aria-pressed="true"] { border-color: var(--ok); background: var(--ok-soft); color: var(--ok); font-weight: 700; }
+.typelist { display: grid; gap: 8px; }
+.typecard { background: var(--sheet); border: 1px solid var(--line); border-radius: var(--radius); padding: 0; }
+.typeresult .typecard { border: 0; background: transparent; }
+.typecard summary { cursor: pointer; padding: 12px 14px; display: grid; gap: 2px; list-style: none; }
+.typecard summary::-webkit-details-marker { display: none; }
+.typecard summary b { font-family: var(--font-display); font-size: 1.05rem; }
+.typecard summary span { color: var(--muted); font-size: 0.86rem; }
+.typecard summary::after { content: "くわしく見る ▾"; font-size: 0.78rem; color: var(--ok); }
+.typecard[open] summary::after { content: "とじる ▴"; }
+.typebody { padding: 0 14px 14px; display: grid; gap: 4px; }
+.typebody ul { margin: 0 0 6px; padding-left: 1.2em; }
+.typebody .label { margin: 6px 0 0; }
+.typebanner { display: grid; gap: 2px; text-decoration: none; color: var(--ink); background: var(--ok-soft); border-radius: var(--radius); padding: 10px 14px; font-size: 0.9rem; }
+.typebanner b { color: var(--ok); }
+.science { background: var(--paper); border: 1px dashed var(--line); border-radius: 10px; padding: 0; }
+.science summary { cursor: pointer; padding: 8px 12px; font-size: 0.86rem; color: var(--ok); font-weight: 700; }
+.science div { padding: 0 12px 10px; font-size: 0.9rem; display: grid; gap: 4px; }
+.science p { margin: 0; }
+.source { font-size: 0.76rem; color: var(--muted); }
+.basics { display: grid; gap: 10px; }

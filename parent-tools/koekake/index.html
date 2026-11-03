@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Zen+Maru+Gothic:wght@500;700&display=swap">
 <link rel="stylesheet" href="style.css">
+<style>nav.tabs .wrap { grid-template-columns: repeat(4, 1fr); } nav.tabs a { font-size: 0.88rem; }</style>
 </head>
 <body>
 <header class="top">
@@ -25,13 +26,15 @@
 <nav class="tabs" aria-label="道具を選ぶ">
   <div class="wrap">
     <a href="#iikae" data-tab="iikae">言い換え</a>
-    <a href="#kotsu" data-tab="kotsu">7つのコツ</a>
-    <a href="#check" data-tab="check">ことばチェック</a>
+    <a href="#kotsu" data-tab="kotsu">コツと発達</a>
+    <a href="#type" data-tab="type">タイプ</a>
+    <a href="#check" data-tab="check">チェック</a>
   </div>
 </nav>
 
 <main class="wrap">
   <section class="panel" id="panel-iikae" aria-labelledby="h-iikae">
+    <div id="type-banner"></div>
     <div class="today" id="today" aria-live="polite"></div>
     <div>
       <h2 id="h-iikae">声かけ言い換え</h2>
@@ -61,10 +64,23 @@
 
   <section class="panel" id="panel-kotsu" aria-labelledby="h-kotsu" hidden>
     <div>
-      <h2 id="h-kotsu">声かけの7つのコツ</h2>
-      <p class="hint">言い換えに共通する考え方です。迷ったら、ここから1つ選んで試してみてください。</p>
+      <h2 id="h-kotsu">子どもの心と脳のきほん</h2>
+      <p class="hint">発達心理学や脳の研究から分かっていることを、短くまとめました。</p>
+    </div>
+    <div class="basics" id="basics"></div>
+    <div>
+      <h2>声かけの7つのコツ</h2>
+      <p class="hint">言い換えに共通する考え方です。「なぜ効く？」で、発達や脳のしくみも読めます。</p>
     </div>
     <div class="tips" id="tips"></div>
+  </section>
+
+  <section class="panel" id="panel-type" aria-labelledby="h-type" hidden>
+    <div>
+      <h2 id="h-type">子どものタイプ別・関わり方</h2>
+      <p class="hint">8つの質問で、わが子の気質の傾向をチェックできます。タイプに合った声かけのコツが分かります。</p>
+    </div>
+    <div class="panel" id="type-root"></div>
   </section>
 
   <section class="panel" id="panel-check" aria-labelledby="h-check" hidden>

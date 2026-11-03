@@ -1,6 +1,7 @@
 // トイトレおたすけ帖：画面の動き
 import { CHECK_KINDS, checkText, groupFindings, splitByFindings } from "./check.js";
-import { CHECK_SAMPLE, READINESS, TOILET_AGES, TOILET_SCENES, TOILET_STAGES } from "./data.js";
+import { CHECK_SAMPLE, QA_SCIENCE, READINESS, SCIENCE, TOILET_AGES, TOILET_SCENES, TOILET_STAGES } from "./data.js";
+import * as types from "./types.js";
 import {
   LOG_KINDS,
   addLog,
@@ -14,7 +15,7 @@ import {
   toiletAnswerText,
   undoLog,
 } from "./logic.js";
-import { $, chips, copy, createStore, el, setupChecker, setupTabs, toast } from "./ui.js";
+import { $, chips, copy, createStore, el, setupChecker, setupTabs, setupTypeTab, toast } from "./ui.js";
 
 const store = createStore("toitore");
 
@@ -70,6 +71,7 @@ function renderQa() {
   } else {
     answer.hidden = false;
     const a = toiletAnswer(q.age, current.stage, current.id);
+    const sci = SCIENCE.find((x) => x.id === QA_SCIENCE[current.id]);
     answer.replaceChildren(
       el("h3", {}, a.concern),
       el("p", { class: "empathy" }, a.empathy),
@@ -77,6 +79,12 @@ function renderQa() {
       el("p", { class: "note" }, el("b", {}, "焦らなくて大丈夫"), a.relax),
       el("p", { class: "note" }, el("b", {}, `${a.ageLabel}のころ`), a.ageNote),
       ...(a.consult ? [el("p", { class: "consult" }, el("b", {}, "相談の目安"), a.consult)] : []),
+      ...(sci
+        ? [el("details", { class: "science" },
+            el("summary", {}, `なぜ？ ${sci.title}`),
+            el("div", {}, el("p", {}, sci.body), el("p", { class: "source" }, `参考：${sci.source}`)),
+          )]
+        : []),
       el("div", { class: "toolbar" },
         el("button", { type: "button", class: "btn primary", onclick: () => copy(toiletAnswerText(a)) }, "この答えをコピー"),
       ),
@@ -197,8 +205,31 @@ $("log-undo").addEventListener("click", () => {
   toast("ひとつ戻しました");
 });
 
+// ---------------------------------------------------------------- しくみ・タイプ
+$("science-list").replaceChildren(
+  ...SCIENCE.map((x) =>
+    el("details", { class: "typecard" },
+      el("summary", {}, el("b", {}, x.title)),
+      el("div", { class: "typebody" }, el("p", {}, x.body), el("p", { class: "source" }, `参考：${x.source}`)),
+    ),
+  ),
+);
+
+const typeBanner = setupTypeTab({
+  container: $("type-root"),
+  store,
+  field: "toitore",
+  types,
+  onChange: () => renderBanner(),
+});
+function renderBanner() {
+  const b = typeBanner();
+  $("type-banner").replaceChildren(...(b ? [b] : []));
+}
+renderBanner();
+
 // ---------------------------------------------------------------- 起動
-setupTabs(["qa", "koekake", "kiroku", "check"], (tab) => {
+setupTabs(["qa", "koekake", "type", "kiroku", "check"], (tab) => {
   if (tab === "kiroku") renderLog();
 });
 renderQa();

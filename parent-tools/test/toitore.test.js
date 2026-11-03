@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { checkText } from "../toitore/check.js";
-import { CHECK_SAMPLE, READINESS, TOILET_PHRASES, TOILET_QA, TOILET_SCENES, TOILET_STAGES } from "../toitore/data.js";
+import { CHECK_SAMPLE, QA_SCIENCE, READINESS, SCIENCE, TOILET_PHRASES, TOILET_QA, TOILET_SCENES, TOILET_STAGES } from "../toitore/data.js";
 import {
   addLog,
   concernsFor,
@@ -48,6 +48,25 @@ describe("トイトレおたすけ帖：お悩みQ&A", () => {
     expect(hits.length).toBeGreaterThanOrEqual(4);
     expect(searchConcerns("夜 オムツ").every((q) => q.stage === "night" || /夜/.test(q.concern + q.tips.join("")))).toBe(true);
     expect(searchConcerns("")).toEqual([]);
+  });
+});
+
+describe("トイトレおたすけ帖：からだと心のしくみ", () => {
+  it("しくみの説明には出典の手がかりがあり、ことばチェックに引っかからない", () => {
+    expect(SCIENCE.length).toBeGreaterThanOrEqual(5);
+    for (const x of SCIENCE) {
+      expect(x.source, x.title).toBeTruthy();
+      expect(checkText(`${x.title}\n${x.body}`), x.title).toEqual([]);
+    }
+  });
+
+  it("お悩みとしくみの対応は、実在する悩みとしくみだけを指す", () => {
+    const qa = new Set(TOILET_QA.map((q) => q.id));
+    const sci = new Set(SCIENCE.map((x) => x.id));
+    for (const [q, x] of Object.entries(QA_SCIENCE)) {
+      expect(qa.has(q), q).toBe(true);
+      expect(sci.has(x), x).toBe(true);
+    }
   });
 });
 

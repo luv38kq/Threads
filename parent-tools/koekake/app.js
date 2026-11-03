@@ -1,8 +1,9 @@
 // 声かけことば帖：画面の動き
 import { CHECK_KINDS, checkText, groupFindings, splitByFindings } from "./check.js";
-import { AGES, CHECK_SAMPLE, SCENES, TIPS } from "./data.js";
+import { AGES, BASICS, CHECK_SAMPLE, SCENES, TIPS } from "./data.js";
+import * as types from "./types.js";
 import { ageLabel, filterPhrases, phraseKey, phraseListText, phraseText, sceneLabel, searchPhrases, todaysPhrase } from "./logic.js";
-import { $, chips, copy, createStore, el, setupChecker, setupTabs, toast } from "./ui.js";
+import { $, chips, copy, createStore, el, setupChecker, setupTabs, setupTypeTab, toast } from "./ui.js";
 
 const store = createStore("koekake");
 const FAV = "fav";
@@ -106,18 +107,44 @@ $("copy-list").addEventListener("click", () => {
 });
 
 function renderTips() {
+  $("basics").replaceChildren(
+    ...BASICS.map((b) =>
+      el("article", { class: "tipcard" },
+        el("h3", {}, b.title),
+        el("p", {}, b.body),
+        el("p", { class: "source" }, `参考：${b.source}`),
+      ),
+    ),
+  );
   $("tips").replaceChildren(
     ...TIPS.map((t, i) =>
       el("article", { class: "tipcard" },
         el("h3", {}, el("span", {}, `コツ${i + 1}`), t.title),
         el("p", {}, t.body),
         el("ul", {}, ...t.examples.map((x) => el("li", {}, `「${x}」`))),
+        el("details", { class: "science" },
+          el("summary", {}, "なぜ効く？（発達・脳のしくみ）"),
+          el("div", {}, el("p", {}, t.science)),
+        ),
       ),
     ),
   );
 }
 
-setupTabs(["iikae", "kotsu", "check"]);
+const typeBanner = setupTypeTab({
+  container: $("type-root"),
+  store,
+  field: "koekake",
+  types,
+  onChange: () => renderBanner(),
+});
+function renderBanner() {
+  const b = typeBanner();
+  $("type-banner").replaceChildren(...(b ? [b] : []));
+}
+renderBanner();
+
+setupTabs(["iikae", "kotsu", "type", "check"]);
 renderToday();
 render();
 renderTips();

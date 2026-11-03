@@ -155,3 +155,108 @@ export function setupChecker({ input, preview, result, note, clear, sample, stor
   });
   render();
 }
+
+/**
+ * タイプチェックのタブ。field は "koekake" か "toitore"（どちらのコツを出すか）
+ * onChange は、結果が変わったときに呼ばれる（ほかのタブの表示を更新するため）
+ */
+export function setupTypeTab({ container, store, field, types, onChange }) {
+  const { TYPE_QUESTIONS, SENSORY_QUESTION, SENSORY_NOTE, TYPE_DISCLAIMER, TYPES, diagnose, isComplete } = types;
+  let answers = store.get("type-answers", {});
+
+  function choice(q, side, label) {
+    return el("button", {
+      type: "button", class: "choice", "aria-pressed": answers[q.id] === side,
+      onclick: () => {
+        answers = { ...answers, [q.id]: side };
+        store.set("type-answers", answers);
+        render();
+        onChange?.();
+      },
+    }, label);
+  }
+
+  function typeDetail(t, open) {
+    const advice = t[field];
+    return el("details", { class: "typecard", open: open || undefined },
+      el("summary", {}, el("b", {}, t.name), el("span", {}, t.catch)),
+      el("div", { class: "typebody" },
+        el("p", { class: "label" }, "よく見られる様子"), el("ul", {}, ...t.traits.map((x) => el("li", {}, x))),
+        el("p", { class: "label" }, "この子の強み"), el("ul", {}, ...t.strengths.map((x) => el("li", {}, x))),
+        el("p", { class: "label" }, "つまずきやすい場面"), el("ul", {}, ...t.hard.map((x) => el("li", {}, x))),
+        el("p", { class: "label" }, field === "toitore" ? "トイトレの進め方" : "関わり方のコツ"),
+        el("ul", {}, ...advice.tips.map((x) => el("li", {}, x))),
+        ...(advice.examples ? [el("p", { class: "label" }, "声かけの例"), el("ul", {}, ...advice.examples.map((x) => el("li", {}, `「${x}」`)))] : []),
+      ),
+    );
+  }
+
+  function render() {
+    const done = isComplete(answers);
+    const result = done ? diagnose(answers) : null;
+    const answered = TYPE_QUESTIONS.filter((q) => answers[q.id]).length;
+    container.replaceChildren(
+      el("p", { class: "note" }, el("b", {}, "はじめに"), TYPE_DISCLAIMER),
+      ...(result
+        ? [
+            el("article", { class: "answer typeresult" },
+              el("p", { class: "label" }, "チェックの結果"),
+              ...(result.near.length
+                ? [el("p", { class: "hint" }, `${result.near.map((t) => t.name).join("・")}の面もあります。そちらのコツも参考にしてください。`)]
+                : []),
+              typeDetail(result.type, true),
+              ...(result.sensory ? [el("p", { class: "consult" }, el("b", {}, SENSORY_NOTE.title), SENSORY_NOTE.body)] : []),
+              el("div", { class: "toolbar" },
+                el("button", {
+                  type: "button", class: "btn", onclick: () => {
+                    answers = {};
+                    store.set("type-answers", answers);
+                    render();
+                    onChange?.();
+                  },
+                }, "チェックをやり直す"),
+              ),
+            ),
+          ]
+        : []),
+      el("div", { class: "quiz" },
+        el("p", { class: "label" }, `質問（${answered} / ${TYPE_QUESTIONS.length}）ふだんの様子に近いほうを選んでください`),
+        ...TYPE_QUESTIONS.map((q, i) =>
+          el("div", { class: "question" },
+            el("p", {}, el("span", { class: "qnum" }, `Q${i + 1}`), q.text),
+            el("div", { class: "choices" }, choice(q, "a", q.a), choice(q, "b", q.b)),
+          ),
+        ),
+        el("div", { class: "question" },
+          el("p", {}, el("span", { class: "qnum" }, "おまけ"), SENSORY_QUESTION.text),
+          el("div", { class: "choices" },
+            el("button", {
+              type: "button", class: "choice", "aria-pressed": answers.sensory === true,
+              onclick: () => { answers = { ...answers, sensory: true }; store.set("type-answers", answers); render(); onChange?.(); },
+            }, "はい"),
+            el("button", {
+              type: "button", class: "choice", "aria-pressed": answers.sensory === false,
+              onclick: () => { answers = { ...answers, sensory: false }; store.set("type-answers", answers); render(); onChange?.(); },
+            }, "いいえ"),
+          ),
+        ),
+        ...(done ? [] : [el("p", { class: "hint" }, "8つの質問に答えると、結果がこの上に出ます。")]),
+      ),
+      el("div", {},
+        el("p", { class: "label" }, "4つのタイプ"),
+        el("div", { class: "typelist" }, ...TYPES.map((t) => typeDetail(t, false))),
+      ),
+    );
+  }
+  render();
+
+  /** ほかのタブに出す「わが子のタイプ」のひとこと */
+  return function banner() {
+    if (!isComplete(answers)) return null;
+    const { type } = diagnose(answers);
+    return el("a", { class: "typebanner", href: "#type" },
+      el("b", {}, `わが子は「${type.name}」`),
+      el("span", {}, type[field].tips[0]),
+    );
+  };
+}

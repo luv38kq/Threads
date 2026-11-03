@@ -19,8 +19,8 @@
   :root:not([data-theme="light"]) { --paper: #11171c; --sheet: #19222a; --line: #2b3843; --ok: #8cbcf0; --ok-soft: #1b2c3f; --marker: #6a5520; --focus: #8cbcf0; }
 }
 :root[data-theme="dark"] { --paper: #11171c; --sheet: #19222a; --line: #2b3843; --ok: #8cbcf0; --ok-soft: #1b2c3f; --marker: #6a5520; --focus: #8cbcf0; }
-nav.tabs .wrap { grid-template-columns: repeat(4, 1fr); }
-nav.tabs a { font-size: 0.88rem; }
+nav.tabs .wrap { grid-template-columns: repeat(5, 1fr); gap: 2px; }
+nav.tabs a { font-size: 0.82rem; padding-inline: 2px; }
 </style>
 </head>
 <body>
@@ -36,8 +36,9 @@ nav.tabs a { font-size: 0.88rem; }
 
 <nav class="tabs" aria-label="道具を選ぶ">
   <div class="wrap">
-    <a href="#qa" data-tab="qa">お悩みQ&amp;A</a>
+    <a href="#qa" data-tab="qa">Q&amp;A</a>
     <a href="#koekake" data-tab="koekake">声かけ</a>
+    <a href="#type" data-tab="type">タイプ</a>
     <a href="#kiroku" data-tab="kiroku">きろく</a>
     <a href="#check" data-tab="check">チェック</a>
   </div>
@@ -45,6 +46,7 @@ nav.tabs a { font-size: 0.88rem; }
 
 <main class="wrap">
   <section class="panel" id="panel-qa" aria-labelledby="h-qa">
+    <div id="type-banner"></div>
     <div>
       <h2 id="h-qa">お悩みQ&amp;A</h2>
       <p class="hint">年齢・今の段階・悩みを選ぶか、言葉で探してください。</p>
@@ -67,6 +69,19 @@ nav.tabs a { font-size: 0.88rem; }
     </div>
     <article class="answer" id="t-answer" aria-live="polite"></article>
     <article class="answer" id="readiness" hidden></article>
+    <div>
+      <h2>トイレとからだ・心のしくみ</h2>
+      <p class="hint">発達や医学の分野で分かっていることを、短くまとめました。</p>
+    </div>
+    <div class="basics" id="science-list"></div>
+  </section>
+
+  <section class="panel" id="panel-type" aria-labelledby="h-type" hidden>
+    <div>
+      <h2 id="h-type">子どものタイプ別・トイトレの進め方</h2>
+      <p class="hint">8つの質問で、わが子の気質の傾向をチェックできます。タイプに合ったトイトレの進め方が分かります。</p>
+    </div>
+    <div class="panel" id="type-root"></div>
   </section>
 
   <section class="panel" id="panel-koekake" aria-labelledby="h-koekake" hidden>

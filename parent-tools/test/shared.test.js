@@ -1,13 +1,14 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { CHECK_KINDS, CHECK_RULES, checkText, groupFindings, splitByFindings } from "../koekake/check.js";
+import { SENSORY_NOTE, TYPE_DISCLAIMER, TYPE_QUESTIONS, TYPES, diagnose, isComplete } from "../koekake/types.js";
 
 const kinds = (text) => checkText(text).map((f) => f.rule.kind);
 const read = (path) => readFileSync(new URL(path, import.meta.url), "utf8");
 
 describe("2つのツールで共通のファイル", () => {
   it("ことばチェック・画面部品・見た目は、両方のフォルダで同じ内容", () => {
-    for (const file of ["check.js", "ui.js", "style.css"]) {
+    for (const file of ["check.js", "ui.js", "style.css", "types.js"]) {
       expect(read(`../toitore/${file}`), file).toBe(read(`../koekake/${file}`));
     }
   });
@@ -65,5 +66,44 @@ describe("ことばチェック", () => {
       expect(rule.reason && rule.hint).toBeTruthy();
       expect(rule.pattern.flags).toContain("g");
     }
+  });
+});
+
+describe("タイプチェック", () => {
+  const all = (side) => Object.fromEntries(TYPE_QUESTIONS.map((q) => [q.id, side]));
+  const by = (approach, intensity) =>
+    Object.fromEntries(TYPE_QUESTIONS.map((q) => [q.id, q.axis === "approach" ? approach : intensity]));
+
+  it("2つの軸の組み合わせで、4つのタイプのどれかになる", () => {
+    expect(diagnose(by("a", "b")).type.id).toBe("komayaka");
+    expect(diagnose(by("a", "a")).type.id).toBe("jikkuri");
+    expect(diagnose(by("b", "b")).type.id).toBe("gungun");
+    expect(diagnose(by("b", "a")).type.id).toBe("nobinobi");
+    expect(diagnose(all("a")).near).toEqual([]);
+  });
+
+  it("どちらとも言えない軸があると、近いタイプも返す", () => {
+    const answers = { ...by("a", "a"), q1: "b", q2: "b" };
+    const r = diagnose(answers);
+    expect(r.type.id).toBe("nobinobi");
+    expect(r.near.map((t) => t.id)).toEqual(["jikkuri"]);
+  });
+
+  it("8問すべて答えるまでは結果を出さない。感覚の質問は任意", () => {
+    expect(isComplete({})).toBe(false);
+    expect(isComplete({ ...all("a"), q8: undefined })).toBe(false);
+    expect(isComplete(all("b"))).toBe(true);
+    expect(diagnose({ ...all("b"), sensory: true }).sensory).toBe(true);
+    expect(diagnose(all("b")).sensory).toBe(false);
+  });
+
+  it("タイプの説明・コツは、ことばチェックに引っかからない", () => {
+    const texts = [TYPE_DISCLAIMER, SENSORY_NOTE.body];
+    for (const t of TYPES) {
+      texts.push(t.catch, ...t.traits, ...t.strengths, ...t.hard, ...t.koekake.tips, ...t.koekake.examples, ...t.toitore.tips);
+      expect(t.koekake.tips.length).toBeGreaterThanOrEqual(3);
+      expect(t.toitore.tips.length).toBeGreaterThanOrEqual(3);
+    }
+    for (const x of texts) expect(checkText(x), x).toEqual([]);
   });
 });

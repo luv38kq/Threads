@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { checkText } from "../koekake/check.js";
-import { AGES, CHECK_SAMPLE, PHRASES, SCENES, TIPS } from "../koekake/data.js";
+import { AGES, BASICS, CHECK_SAMPLE, PHRASES, SCENES, TIPS } from "../koekake/data.js";
 import { filterPhrases, phraseListText, searchPhrases, todaysPhrase } from "../koekake/logic.js";
 
 describe("声かけことば帖", () => {
@@ -51,7 +51,17 @@ describe("声かけことば帖", () => {
     expect(text).toBe("【朝の支度で使える声かけ】\n\n✕ 早くして！\n→ 時計の長い針が6になったら出発ね");
   });
 
-  it("コツは7つ", () => {
+  it("コツは7つで、すべてに「なぜ効く？」の説明がある", () => {
     expect(TIPS).toHaveLength(7);
+    for (const t of TIPS) expect(t.science.length, t.title).toBeGreaterThan(40);
+  });
+
+  it("心と脳のきほんには出典の手がかりがあり、文章はことばチェックに引っかからない", () => {
+    expect(BASICS.length).toBeGreaterThanOrEqual(5);
+    for (const b of BASICS) {
+      expect(b.source, b.title).toBeTruthy();
+      expect(checkText(`${b.title}\n${b.body}`), b.title).toEqual([]);
+    }
+    for (const t of TIPS) expect(checkText(t.science), t.title).toEqual([]);
   });
 });
