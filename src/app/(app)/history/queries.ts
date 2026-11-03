@@ -7,6 +7,7 @@ export const KIND_LABELS: Record<GenerationKind, string> = {
   analyze: "投稿分析",
   rewrite: "リライト",
   research: "競合分析",
+  buzz: "バズ量産",
 };
 
 export const KIND_PATHS: Record<GenerationKind, string> = {
@@ -14,6 +15,7 @@ export const KIND_PATHS: Record<GenerationKind, string> = {
   analyze: "/analyze",
   rewrite: "/rewrite",
   research: "/research/report",
+  buzz: "/buzz",
 };
 
 export async function getAccountName(accountId: string | null): Promise<string | undefined> {
@@ -50,7 +52,9 @@ export async function listHistory(options: { kind?: GenerationKind; limit: numbe
   return (rows ?? []).map((row) => {
     const input = (row.input ?? {}) as Record<string, unknown>;
     const summarySource =
-      typeof input.theme === "string"
+      typeof input.label === "string"
+        ? input.label
+        : typeof input.theme === "string"
         ? input.theme
         : typeof input.postText === "string"
           ? input.postText

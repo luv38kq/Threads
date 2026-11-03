@@ -319,6 +319,9 @@ export function createMockSupabase({ pool, jwtSecret, publishableKey, secretKey 
         const keys = onConflict.split(",").map((k) => k.trim());
         const updates = columns.filter((c) => !keys.includes(c)).map((c) => `${ident(c)} = excluded.${ident(c)}`);
         sql += ` on conflict (${keys.map(ident).join(", ")}) do update set ${updates.join(", ")}`;
+      } else if (onConflict && prefer.includes("resolution=ignore-duplicates")) {
+        const keys = onConflict.split(",").map((k) => k.trim());
+        sql += ` on conflict (${keys.map(ident).join(", ")}) do nothing`;
       }
       if (representation) sql += ` returning ${selectList(url.searchParams)}`;
     } else if (req.method === "PATCH") {

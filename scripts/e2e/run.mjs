@@ -323,6 +323,63 @@ async function main() {
   await user.waitForURL(/\/generate\?/);
   check((await user.inputValue("#theme")).includes("在宅ワークの最初の1週間"), "レポートの投稿案から投稿生成に進める");
 
+  // ---------------------------------------------------------------- 8b. バズ量産
+  await user.goto(`${APP}/buzz`);
+  check(await user.getByText("まだバズ投稿がありません").isVisible(), "バズ量産：最初はストックが空");
+  await user.click('button:has-text("テキストを貼り付け")');
+  const buzzText =
+    "いいね:320\nトイトレあるある。\nパンツを見せると逃げる。\n---\nいいね:150\n「出た！」の瞬間、親が泣く。\n---\nいいね:90\n夜のオムツはまだ外せない。";
+  await user.fill("#buzzText", buzzText);
+  await user.fill("#buzzGenre", "トイトレ");
+  await user.click('button:has-text("取り込む") >> nth=-1');
+  await user.getByText("3件を取り込みました").waitFor({ timeout: 30000 });
+  check(true, "バズ量産：貼り付けたテキストを取り込める");
+  await user.fill("#buzzText", buzzText);
+  await user.click('button:has-text("取り込む") >> nth=-1');
+  await user.getByText("3件は取り込み済みだったので飛ばしました").waitFor({ timeout: 30000 });
+  check(true, "バズ量産：同じ投稿は二重に取り込まない");
+
+  await user.click('button:has-text("JSONファイル")');
+  const shJson = JSON.stringify({
+    posts: [
+      { public_ref: "SH-900001", platform: "x", genre: "声かけ", text: "「早くして」を「長い針が6になったら出発ね」に。", likes: 500, url: "https://x.com/a/status/1" },
+      {
+        public_ref: "SH-900002",
+        platform: "threads",
+        genre: "声かけ",
+        author: "koekake",
+        text: "叱る前に言うこと。",
+        likes: 210,
+        thread: { replies: [{ author: "koekake", text: "「どうしたかったの？」", relation: "author_continuation" }] },
+      },
+    ],
+  });
+  await user.setInputFiles("#buzzFile", { name: "saved.json", mimeType: "application/json", buffer: Buffer.from(shJson) });
+  await user.click('button:has-text("取り込む") >> nth=-1');
+  await user.getByText("2件を取り込みました").waitFor({ timeout: 30000 });
+  check(true, "バズ量産：スレハック形式のJSONファイルを取り込める");
+  await user.reload();
+  check((await user.locator("li", { hasText: "トイトレ" }).first().textContent()).includes("3件"), "バズ量産：ジャンルごとの件数が出る");
+  check((await pool.query("select thread from public.buzz_posts where source_ref = 'SH-900002'")).rows[0].thread[0] === "「どうしたかったの？」", "バズ量産：ツリーの続きも保存される");
+
+  await user.selectOption("#genre", "トイトレ");
+  await user.selectOption("#ctaMode", "none");
+  await user.selectOption("#draftCount", "3");
+  await user.click('button:has-text("型を抜き出して投稿案を作る")');
+  await user.waitForURL(/\/buzz\/[0-9a-f-]{36}$/, { timeout: 60000 });
+  const buzzUrl = user.url();
+  check(await user.getByRole("heading", { name: "あるある列挙→本音の一言型" }).isVisible(), "バズ量産：抜き出した型が表示される");
+  check(await user.getByText("投稿案2", { exact: true }).isVisible(), "バズ量産：投稿案が表示される");
+  check(!(await user.content()).includes("誰でも簡単"), "バズ量産：禁止表現は自動で手直しされる");
+  const buzzCalls = ai.requests.filter((r) => r.body.system.includes("伸びた投稿（バズ投稿）"));
+  const buzzPrompt = buzzCalls[0]?.body.messages[0].content ?? "";
+  check(buzzCalls.length === 2, "バズ量産：違反があったときだけ、もう1回だけ直してもらう");
+  check(buzzPrompt.includes("誘導の扱い：誘導しない") && buzzPrompt.includes("パンツを見せると逃げる") && !buzzPrompt.includes("叱る前に"), "バズ量産：選んだジャンルの投稿と「誘導しない」指示がAIに渡る");
+  check(buzzPrompt.indexOf("パンツを見せると逃げる") < buzzPrompt.indexOf("親が泣く"), "バズ量産：反応の良い順にAIに渡す");
+  await shot(user, "08-buzz-result");
+  await user.goto(`${APP}/history?kind=buzz`);
+  check(await user.getByText("トイトレのバズ投稿から量産").isVisible(), "バズ量産：履歴に残る");
+
   // ---------------------------------------------------------------- 9. 他人のデータは見えない
   await supa.createUser("other@example.com", "other-password-1");
   await pool.query("update public.profiles set status = 'approved' where email = 'other@example.com'");
@@ -333,12 +390,14 @@ async function main() {
   await other.fill("#password", "other-password-1");
   await other.click('button[type="submit"]');
   await other.waitForURL(/\/dashboard/);
-  for (const url of [genUrl, accountUrl, uploadJson.url]) {
+  for (const url of [genUrl, accountUrl, uploadJson.url, buzzUrl]) {
     await other.goto(url);
     check(await other.getByText("ページが見つかりません").isVisible(), `他の利用者は ${new URL(url).pathname.split("/")[1]} の他人のページを開けない`);
   }
   await other.goto(`${APP}/history`);
   check(await other.getByText("まだ履歴はありません").isVisible(), "他の利用者の履歴には、自分の分しか出ない");
+  await other.goto(`${APP}/buzz`);
+  check(await other.getByText("まだバズ投稿がありません").isVisible(), "他の利用者のバズ投稿ストックは見えない");
   await other.goto(`${APP}/admin`);
   check(await other.getByText("ページが見つかりません").isVisible(), "管理者以外は管理画面を開けない");
 

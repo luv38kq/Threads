@@ -58,6 +58,33 @@ function responseFor(system, prompt) {
       closing_habits: "問いかけで終える",
     };
   }
+  if (system.includes("伸びた投稿（バズ投稿）")) {
+    const draft = (body) => ({
+      pattern_name: "あるある列挙→本音の一言型",
+      angle: "トイトレのあるあるから入る共感型",
+      hook_reason: "親が言えない本音を代弁して手を止める",
+      body,
+      comments: [],
+    });
+    // 1回目はわざと禁止表現を入れ、手直しの流れを確認する
+    if (prompt.includes("<problems>")) {
+      return { patterns: [draft("トイトレ、うまくいかない日もある。\nそれで大丈夫。"), draft("「出た！」の一言で、親も泣きそうになる。")] };
+    }
+    return {
+      summary: "あるあるの列挙と、最後の本音の一言で共感を集める投稿が強い。",
+      patterns: [
+        {
+          name: "あるある列挙→本音の一言型",
+          hook: "誰もが経験した場面を短く並べる",
+          structure: ["あるある3つ", "本音の一言", "やさしい問いかけ"],
+          engagement: "「うちも！」と返信したくなる",
+          why_it_works: "自分だけじゃないと安心できる",
+          source_ranks: [1, 2],
+        },
+      ],
+      drafts: [draft("トイトレは誰でも簡単に進む。\nそう思ってた時期がありました。"), draft("「出た！」の一言で、親も泣きそうになる。")],
+    };
+  }
   if (system.includes("競合アカウントで反応が良かった投稿を分析")) {
     return {
       summary: "本音の代弁と数字で手を止める投稿が強い。",

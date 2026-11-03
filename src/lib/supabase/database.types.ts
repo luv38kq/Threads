@@ -60,7 +60,7 @@ export type AiCredentialRow = {
   verified_at: string | null;
 } & Timestamps;
 
-export type GenerationKind = "generate" | "analyze" | "rewrite" | "research";
+export type GenerationKind = "generate" | "analyze" | "rewrite" | "research" | "buzz";
 
 export type Json =
   | string
@@ -103,6 +103,32 @@ export type ResearchSetRow = {
   created_at: string;
 };
 
+export type BuzzPlatform = "threads" | "x" | "other";
+
+export type BuzzPostRow = {
+  id: string;
+  user_id: string;
+  source_ref: string;
+  genre: string;
+  platform: BuzzPlatform;
+  author: string;
+  url: string;
+  text: string;
+  thread: Json;
+  likes: number;
+  replies: number;
+  reposts: number;
+  views: number;
+  posted_at: string | null;
+  created_at: string;
+};
+
+export type BuzzGenreSummaryRow = {
+  genre: string;
+  post_count: number;
+  max_likes: number;
+};
+
 type Table<Row, Required extends keyof Row = never> = {
   Row: Row;
   Insert: Partial<Row> & Pick<Row, Required>;
@@ -127,8 +153,11 @@ export type Database = {
       >;
       extension_tokens: Table<ExtensionTokenRow, "token_hash" | "token_hint">;
       research_sets: Table<ResearchSetRow, "posts" | "post_count">;
+      buzz_posts: Table<BuzzPostRow, "source_ref" | "text">;
     };
-    Views: { [_ in never]: never };
+    Views: {
+      buzz_genre_summary: { Row: BuzzGenreSummaryRow; Relationships: [] };
+    };
     Functions: {
       is_active_user: { Args: Record<string, never>; Returns: boolean };
     };

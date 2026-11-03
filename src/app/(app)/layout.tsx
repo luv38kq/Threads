@@ -10,6 +10,7 @@ const NAV = [
   { href: "/analyze", label: "投稿分析" },
   { href: "/rewrite", label: "リライト" },
   { href: "/research", label: "競合リサーチ" },
+  { href: "/buzz", label: "バズ量産" },
   { href: "/history", label: "履歴" },
 ] as const;
 
