@@ -39,6 +39,12 @@ describe("声かけ言い換えのデータ", () => {
     }
   });
 
+  it("言い換えは100個以上あり、同じ場面・年齢で同じ言い換えが重ならない", () => {
+    expect(PHRASES.length).toBeGreaterThanOrEqual(100);
+    const keys = PHRASES.map((p) => `${p.scene}|${p.ok}`);
+    expect(new Set(keys).size).toBe(keys.length);
+  });
+
   it("場面と年齢でしぼり込める", () => {
     const items = filterPhrases("morning", "3-4");
     expect(items.length).toBeGreaterThan(0);
@@ -100,6 +106,14 @@ describe("ことばチェック", () => {
     expect(kinds("片付けないと捨てるよ。おやつ抜きね")).toEqual(["punish", "punish"]);
     expect(kinds("〇〇ちゃんはもうできてるのに")).toEqual([]);
     expect(kinds("ゆうくんはもうできてたのに")).toEqual(["compare"]);
+  });
+
+  it("気持ちの否定・謝罪の強要・「みんな」との比較を見つける", () => {
+    expect(kinds("泣かないの！大丈夫だから")).toEqual(["deny", "deny"]);
+    expect(kinds("ごめんなさいは？")).toEqual(["apology"]);
+    expect(kinds("みんなもっと頑張ってるよ")).toEqual(["compare"]);
+    expect(kinds("泣くなら外でね")).toEqual([]);
+    expect(kinds("焦らなくて大丈夫です")).toEqual([]);
   });
 
   it("やさしい言い方には何も付けない", () => {
